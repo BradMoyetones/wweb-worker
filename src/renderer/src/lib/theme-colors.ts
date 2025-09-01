@@ -1,6 +1,5 @@
 // import { ThemeColors } from "@/types/theme-types";
 
-import { ThemeColors } from "@/types/theme-types";
 
 // const themes = {
 //     Orange: {
@@ -248,7 +247,7 @@ import { ThemeColors } from "@/types/theme-types";
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   };
   
-  export const allColorThemes: ThemeColors[] = [
+  export const allColorThemes: any[] = [
     "Default",
     "Red",
     "Rose",

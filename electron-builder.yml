@@ -1,5 +1,5 @@
-appId: com.music.bradtunes
-productName: BradTunes
+appId: com.worker.wweb-worker
+productName: wweb-worker
 directories:
   buildResources: build
 files:
@@ -14,8 +14,6 @@ asarUnpack:
   - out/renderer/assets/**
   - out/renderer/img/**
   - out/renderer/index.html
-  - out/renderer/yt-dlp*
-  - out/renderer/ffmpeg*
   - drizzle/migrations/**
 win:
   icon: resources/icon.png
@@ -55,6 +53,6 @@ npmRebuild: false
 publish:
   provider: github
   owner: BradMoyetones
-  repo: BradTunes
+  repo: wweb-worker
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

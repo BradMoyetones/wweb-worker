@@ -1,22 +1,22 @@
 {
-  "name": "bradtunes",
-  "version": "1.0.9",
-  "description": "Hi! I’m Brad, and this is BradTunes, an app that combines a full-featured music player with the power of yt-dlp downloads.",
+  "name": "wweb-worker",
+  "version": "1.0.0",
+  "description": "Hi! I’m Brad, and this is wweb worker.",
   "main": "./out/main/index.js",
   "author": "Brad Moyetones",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BradMoyetones/BradTunes.git"
+    "url": "git+https://github.com/BradMoyetones/wweb-worker.git"
   },
-  "homepage": "https://github.com/BradMoyetones/BradTunes#readme",
+  "homepage": "https://github.com/BradMoyetones/wweb-worker#readme",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/BradMoyetones/BradTunes/issues"
+    "url": "https://github.com/BradMoyetones/wweb-worker/issues"
   },
   "publish": {
     "provider": "github",
     "owner": "BradMoyetones",
-    "repo": "BradTunes"
+    "repo": "wweb-worker"
   },
   "scripts": {
     "format": "prettier --write .",

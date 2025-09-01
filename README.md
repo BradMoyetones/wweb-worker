@@ -10,8 +10,8 @@ This is an open-source app built with **Electron** and **whatsapp-web.js** for a
 # INSTALLATION
 
 <!-- MANPAGE: BEGIN EXCLUDED SECTION -->
-[![Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)](https://github.com/BradMoyetones/wweb-worker/releases/latest/download/wweb-worker-1.0.9-setup.exe)
-[![MacOS](https://img.shields.io/badge/-MacOS-lightblue.svg?style=for-the-badge&logo=apple)](https://github.com/BradMoyetones/wweb-worker/releases/latest/download/wweb-worker-1.0.9.dmg)
+[![Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)](https://github.com/BradMoyetones/wweb-worker/releases/latest/download/wweb-worker-1.0.0-setup.exe)
+[![MacOS](https://img.shields.io/badge/-MacOS-lightblue.svg?style=for-the-badge&logo=apple)](https://github.com/BradMoyetones/wweb-worker/releases/latest/download/wweb-worker-1.0.0.dmg)
 [![All versions](https://img.shields.io/badge/-All_Versions-lightgrey.svg?style=for-the-badge)](https://github.com/BradMoyetones/wweb-worker/releases)
 
 # Project Setup
