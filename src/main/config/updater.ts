@@ -8,12 +8,7 @@ import { platform } from 'node:os';
 
 const execPromise = promisify(exec)
 const repoOwner = "BradMoyetones"; // 🔹 Cambia esto por tu usuario o equipo de GitHub
-const repoName = "BradTunes"; // 🔹 Cambia esto por el nombre de tu repo
-
-// console.log('YT-DLP Path:', ytDlpPath);
-// console.log('FFmpeg Path:', ffmpegPath);
-// console.log('Output Directory:', outputDir);
-// console.log('Image Directory:', imgDir);
+const repoName = "wweb-worker"; // 🔹 Cambia esto por el nombre de tu repo
 
 // Configurar electron-log correctamente
 log.transports.file.level = "info";

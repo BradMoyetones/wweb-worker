@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { installLatestVersionApp, verifyVersionApp } from './config/updater'
+import { initializeClient } from '@core/lib/whatsappClient'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -186,4 +187,14 @@ ipcMain.on('close', () => {
 
 ipcMain.handle('open-new-window', (_event, url: string) => {
   createNewWindow(url);
+});
+
+// WHATSAPP
+ipcMain.handle('whatsapp-init', async (event) => {
+  try {
+    const client = await initializeClient(event.sender);
+    return { success: true };
+  } catch (err:any) {
+    return { success: false, error: err.message };
+  }
 });

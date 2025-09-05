@@ -8,13 +8,16 @@ import { RouterProvider } from 'react-router-dom'
 import router from './router'
 import { Toaster } from './components/ui/sonner';
 import { ThemeProvider, VersionProvider } from './contexts';
+import { WhatsAppProvider } from './contexts/WhatsAppContext';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark">
         <VersionProvider>
-          <RouterProvider router={router} />
-          <Toaster />
+          <WhatsAppProvider>
+            <RouterProvider router={router} />
+            <Toaster />
+          </WhatsAppProvider>
         </VersionProvider>
     </ThemeProvider>
   </React.StrictMode>

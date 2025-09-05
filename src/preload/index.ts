@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { Chat, ClientInfo, Message } from 'whatsapp-web.js';
 
 // Custom APIs for renderer
 const api = {
@@ -19,7 +20,33 @@ const api = {
     },
 }
 
+const whatsappApi = {
+  // Inicializa el cliente
+  init: () => ipcRenderer.invoke('whatsapp-init'),
+  
+  // Escucha cambios de estado: qr, ready, loading, auth_failure, disconnected
+  onStatus: (callback: (data: { status: string; qr?: string; error?: string }) => void) => {
+    ipcRenderer.on('whatsapp-status', (_, data) => callback(data));
+  },
+
+  // Perfil del usuario actual
+  onUser: (callback: (user: ClientInfo) => void) => {
+    ipcRenderer.on('whatsapp-user', (_, user: ClientInfo) => callback(user));
+  },
+
+  // Chats iniciales
+  onChats: (callback: (chats: Chat[]) => void) => {
+    ipcRenderer.on('whatsapp-chats', (_, chats: Chat[]) => callback(chats));
+  },
+
+  // Mensajes entrantes
+  onMessage: (callback: (msg: Message) => void) => {
+    ipcRenderer.on('whatsapp-message', (_, msg: Message) => callback(msg));
+  },
+};
+
 export type Api = typeof api
+export type WhatsappApi = typeof whatsappApi
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
@@ -28,6 +55,7 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('whatsappApi', whatsappApi);
   } catch (error) {
     console.error(error)
   }
