@@ -6,6 +6,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { installLatestVersionApp, verifyVersionApp } from './config/updater'
 import { initializeClient } from '@core/lib/whatsappClient'
+import { Client } from 'whatsapp-web.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -192,9 +193,50 @@ ipcMain.handle('open-new-window', (_event, url: string) => {
 // WHATSAPP
 ipcMain.handle('whatsapp-init', async (event) => {
   try {
-    const client = await initializeClient(event.sender);
+    await initializeClient(event.sender);
     return { success: true };
   } catch (err:any) {
     return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle("whatsapp-get-messages", async (event, chatId: string) => {
+  try {
+    const client = await initializeClient(event.sender) as Client | null;
+    if(!client) return
+
+    const chat = await client.getChatById(chatId);
+    const messages = await chat.fetchMessages({ limit: 50 }); // últimos 50
+    return messages;
+  } catch (err) {
+    console.error("Error fetching messages", err);
+    return [];
+  }
+});
+
+ipcMain.handle("whatsapp-download-media", async (event, messageId: string, chatId: string) => {
+  try {
+    const client = await initializeClient(event.sender) as Client | null;
+    if (!client) return null;
+
+    const chat = await client.getChatById(chatId);
+    const messages = await chat.fetchMessages({ limit: 50 });
+
+    const message = messages.find(m => m.id._serialized === messageId);
+    if (!message) return null;
+
+    if (!message.hasMedia) {
+      return { error: "No media in message" };
+    }
+
+    const media = await message.downloadMedia();
+    if (!media) {
+      return { error: "Failed to download media" };
+    }
+
+    return media;
+  } catch (err: any) {
+    console.error("Error downloading media", err);
+    return { error: err.message };
   }
 });

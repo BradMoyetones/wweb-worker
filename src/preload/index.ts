@@ -43,6 +43,9 @@ const whatsappApi = {
   onMessage: (callback: (msg: Message) => void) => {
     ipcRenderer.on('whatsapp-message', (_, msg: Message) => callback(msg));
   },
+
+  getMessagesChat: (chatId: string) => ipcRenderer.invoke('whatsapp-get-messages', chatId),
+  downloadMedia: (messageId: string, chatId: string) => ipcRenderer.invoke('whatsapp-download-media', messageId, chatId)
 };
 
 export type Api = typeof api

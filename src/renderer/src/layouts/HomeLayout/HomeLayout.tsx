@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { AsideMenu, TitleBar } from "./components";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function HomeLayout() {
 
@@ -10,8 +11,10 @@ export default function HomeLayout() {
             <div id="app" className="relative h-screen space-x-2">
                 <TitleBar />
 
-                <aside className="[grid-area:aside] flex-col flex overflow-y-auto ml-2" id="sidebarMain">
-                    <AsideMenu />
+                <aside className="[grid-area:aside] flex-col flex ml-2" id="sidebarMain">
+                    <ScrollArea className=" h-full">
+                        <AsideMenu />
+                    </ScrollArea>
                 </aside>
 
                 <main

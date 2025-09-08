@@ -12,8 +12,9 @@ export const WhatsAppContext = createContext<WhatsAppContextType | undefined>(un
 export function WhatsAppProvider({ children }: { children: React.ReactNode }) {
     const [status, setStatus] = useState<WhatsAppStatus>('loading');
     const [imgQr, setImgQr] = useState("");
-    const [user, setUser] = useState<ClientInfo | null>(null);
+    const [user, setUser] = useState<ClientInfo & {profilePic: string | null} | null>(null);
     const [chats, setChats] = useState<Chat[]>([]);
+    const [chatSelected, setChatSelected] = useState("")
 
     const whatsappSteps = [
         {
@@ -52,17 +53,37 @@ export function WhatsAppProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const handleNewMsg = (msg: Message) => {
-        console.log(msg);
-    }
+        setChats((prevChats) => {
+            return prevChats.map((chat) => {
+                // en chats privados, `chat.id._serialized` === `msg.from` o `msg.to`
+                if (chat.id._serialized === msg.from || chat.id._serialized === msg.to) {
+                    return {
+                        ...chat,
+                        lastMessage: msg, // whatsapp-web.js ya trae la propiedad
+                    };
+                }
+                return chat;
+            });
+        });
+    };
     
     useEffect(() => {
-        window.whatsappApi.onUser((user) => setUser(user));
+        window.whatsappApi.onUser((user) => setUser(user as ClientInfo & {profilePic: string | null}));
         window.whatsappApi.onChats((chats) => setChats(chats));
         window.whatsappApi.onMessage((msg) => handleNewMsg(msg));
     }, []);
 
     return (
-        <WhatsAppContext.Provider value={{ imgQr, status }}>
+        <WhatsAppContext.Provider 
+            value={{ 
+                imgQr, 
+                status,
+                user,
+                chats,
+                chatSelected,
+                setChatSelected
+            }}
+        >
             {status === 'loading' || status === 'qr' ? (
                 <div className="bg-background fixed inset-0 z-50">
                     <div className="flex items-center justify-center h-full">

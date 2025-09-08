@@ -39,6 +39,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
     "@fontsource-variable/onest": "^5.1.0",
     "@hookform/resolvers": "^3.10.0",
     "@ngard/tiny-isequal": "^1.1.0",
@@ -86,6 +88,7 @@
     "electron-store": "^10.0.1",
     "electron-updater": "^6.3.9",
     "embla-carousel-react": "^8.6.0",
+    "emoji-mart": "^5.6.0",
     "howler": "^2.2.4",
     "idb-keyval": "^6.2.1",
     "input-otp": "^1.4.2",
