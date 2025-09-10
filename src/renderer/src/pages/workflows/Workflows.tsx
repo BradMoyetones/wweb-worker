@@ -1,36 +1,53 @@
-import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, Background, Controls, MiniMap, ReactFlowProvider } from '@xyflow/react';
+import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, Background, MiniMap, Edge, Node, ReactFlowInstance } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCallback, useState } from 'react';
-import Sidebar from './components/Sidebar/Sidebar';
+import { Sidebar, Controls } from './components';
+import { CustomNode } from './components';
+import { ApiNode } from './components/ApiNode/ApiNode';
 
-const initialNodes = [
-    {
-        id: 'n1',
-        position: { x: 0, y: 0 },
-        data: { label: 'Node 1' },
-        type: 'input',
-    },
-    {
-        id: 'n2',
-        position: { x: 100, y: 100 },
-        data: { label: 'Node 2' },
-    },
-];
 
-const initialEdges = [
+const nodeTypes = {
+    custom: CustomNode,
+    apiNode: ApiNode
+}
+
+const initialNodes: Node[] = [
     {
-        id: 'n1-n2',
-        source: 'n1',
-        target: 'n2',
-        type: 'step',
-        label: 'connects with',
+        id: "1",
+        type: "custom",
+        position: { x: 250, y: 100 },
+        data: { label: "Nodo Inicial", type: "start" },
     },
-];
+    {
+        id: "2",
+        type: "custom",
+        position: { x: 400, y: 200 },
+        data: { label: "Proceso", type: "process" },
+    },
+    {
+        id: "3",
+        type: "custom",
+        position: { x: 250, y: 300 },
+        data: { label: "Decisión", type: "decision" },
+    },
+    {
+        id: "4",
+        type: "apiNode",
+        position: { x: 250, y: 300 },
+        data: { label: "Api", type: "api" },
+    },
+]
+
+const initialEdges: Edge[] = [
+    { id: "e1-2", source: "1", target: "2" },
+    { id: "e2-3", source: "2", target: "3" },
+]
 
 export default function Workflows() {
     const [nodes, setNodes] = useState(initialNodes);
     const [edges, setEdges] = useState(initialEdges);
-    
+    const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null)
+
     const onNodesChange = useCallback(
         (changes) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
         [],
@@ -44,27 +61,64 @@ export default function Workflows() {
         [],
     );
 
+    const onDragOver = useCallback((event: React.DragEvent) => {
+        event.preventDefault()
+        event.dataTransfer.dropEffect = "move"
+    }, [])
+
+    const onDrop = useCallback(
+        (event: React.DragEvent) => {
+            event.preventDefault()
+
+            const type = event.dataTransfer.getData("application/reactflow")
+            const label = event.dataTransfer.getData("application/reactflow-label")
+
+            if (typeof type === "undefined" || !type || !reactFlowInstance) {
+                return
+            }
+
+            const position = reactFlowInstance.screenToFlowPosition({
+                x: event.clientX,
+                y: event.clientY,
+            })
+
+            const newNode: Node = {
+                id: `${Date.now()}`,
+                type: "custom",
+                position,
+                data: { label, type },
+            }
+
+            setNodes((nds) => nds.concat(newNode))
+        },
+        [reactFlowInstance, setNodes],
+    )
+
     return (
-        <div className="fixed top-0 left-0 right-0 bottom-0 bg-background z-[11] flex">
-            Workflows
-            <div className="providerflow">
-      <ReactFlowProvider>
-        <div className="reactflow-wrapper" style={{ width: '100vw', height: '100vh' }}>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            fitView
-          >
-            <Controls />
-            <Background />
-          </ReactFlow>
-        </div>
-        <Sidebar nodes={nodes} setNodes={setNodes} />
-      </ReactFlowProvider>
-    </div>
+        <div className="flex h-[calc(100vh-64px)] w-full">
+            <Sidebar />
+            <div className="flex-1">
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onConnect={onConnect}
+                    onInit={setReactFlowInstance}
+                    onDrop={onDrop}
+                    onDragOver={onDragOver}
+                    nodeTypes={nodeTypes}
+                    defaultEdgeOptions={{
+                        animated: true,
+                        style: { strokeDasharray: "5 5", stroke: "var(--primary)" },
+                    }}
+                    fitView
+                >
+                    <Background />
+                    <Controls />
+                    <MiniMap nodeColor="#10b981" maskColor="rgba(0, 0, 0, 0.1)" className="bg-card" />
+                </ReactFlow>
+            </div>
         </div>
     )
 }
