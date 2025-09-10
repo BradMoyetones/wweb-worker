@@ -206,7 +206,7 @@ ipcMain.handle("whatsapp-get-messages", async (event, chatId: string) => {
     if(!client) return
 
     const chat = await client.getChatById(chatId);
-    const messages = await chat.fetchMessages({ limit: 50 }); // últimos 50
+    const messages = await chat.fetchMessages({ limit: 100 }); // últimos 50
     return messages;
   } catch (err) {
     console.error("Error fetching messages", err);
@@ -237,6 +237,35 @@ ipcMain.handle("whatsapp-download-media", async (event, messageId: string, chatI
     return media;
   } catch (err: any) {
     console.error("Error downloading media", err);
+    return { error: err.message };
+  }
+});
+
+ipcMain.handle("whatsapp-send-message", async (event, chatId: string, content: string, replyToId?: string | null) => {
+  try {
+    const client = await initializeClient(event.sender) as Client | null;
+    if (!client) return { error: "No client initialized" };
+
+    const chat = await client.getChatById(chatId);
+    if (!chat) return { error: "Chat not found" };
+
+    if (replyToId) {
+      // buscar el mensaje al que queremos responder
+      const messages = await chat.fetchMessages({ limit: 100 }); // búscalo en los últimos 100 por si acaso
+      const msgToReply = messages.find(m => m.id._serialized === replyToId);
+
+      if (!msgToReply) {
+        return { error: "Message to reply not found" };
+      }
+
+      await msgToReply.reply(content, chatId);
+      return { success: true, replied: true };
+    } else {
+      await client.sendMessage(chatId, content);
+      return { success: true, replied: false };
+    }
+  } catch (err: any) {
+    console.error("Error sending message", err);
     return { error: err.message };
   }
 });

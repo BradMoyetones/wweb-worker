@@ -1,5 +1,5 @@
 // src/main/lib/whatsappClient.ts
-import { Chat, Client, ClientInfo, LocalAuth } from 'whatsapp-web.js';
+import { Chat, Client, ClientInfo, Contact, LocalAuth } from 'whatsapp-web.js';
 import path from 'path';
 import { app, WebContents } from 'electron'; // Importa 'app' para acceder a rutas del sistema
 
@@ -9,6 +9,7 @@ let activeWebContents: WebContents | null = null;
 // Snapshot de estado actual
 let userInfo: ClientInfo | null = null;
 let chats: Chat[] = [];
+let contacts: Contact[] = []
 let lastStatus: { status: string; qr?: string; error?: string } = { status: 'init' };
 
 // Obtén el path para guardar los archivos de sesión
@@ -34,6 +35,7 @@ export const initializeClient = (webContents: Electron.WebContents) => {
             // 🔄 Re-sincronizar estado
             if (userInfo) sendToRenderer('whatsapp-user', userInfo);
             if (chats.length > 0) sendToRenderer('whatsapp-chats', chats);
+            if (contacts.length > 0) sendToRenderer('whatsapp-contacts', contacts);
             if (lastStatus) sendToRenderer('whatsapp-status', lastStatus);
 
             resolve(client);
@@ -83,9 +85,13 @@ export const initializeClient = (webContents: Electron.WebContents) => {
             userInfo = enrichedUser
             chats = await client.getChats();
             lastStatus = { status: 'ready' };
+            contacts = (await client.getContacts()).filter(
+                c => c.isMyContact && c.isUser && !c.isGroup
+            );
 
             sendToRenderer('whatsapp-user', enrichedUser);
             sendToRenderer('whatsapp-chats', chats);
+            sendToRenderer('whatsapp-contacts', contacts);
             sendToRenderer('whatsapp-status', lastStatus);
 
             resolve(client);
@@ -93,7 +99,39 @@ export const initializeClient = (webContents: Electron.WebContents) => {
 
         // Nuevo mensaje
         client.on('message_create', (msg) => {
+
+            chats = chats.map((chat) => {
+                if (chat.isGroup && chat.id._serialized === msg.to) {
+                    return { ...chat, lastMessage: msg };
+                }
+                if (msg.fromMe && chat.id._serialized === msg.to) {
+                    return { ...chat, lastMessage: msg };
+                }
+                if (!msg.fromMe && chat.id._serialized === msg.from) {
+                    return { ...chat, lastMessage: msg };
+                }
+                return chat;
+            });
+            
             sendToRenderer('whatsapp-message', msg);
+        });
+
+        client.on('chat_removed', (chat) => {
+            console.log('Chat eliminado:', chat.id._serialized);
+
+            // actualizas tu snapshot global
+            chats = chats.filter(c => c.id._serialized !== chat.id._serialized);
+
+            // reenvías la data al renderer
+            sendToRenderer('whatsapp-chats', chats);
+        });
+
+        client.on('chat_archived', async(chat) => {
+            if(!client) return
+            console.log('Chat archivado:', chat.id._serialized);
+            chats = await client.getChats();
+            // reenvías la data al renderer
+            sendToRenderer('whatsapp-chats', chats);
         });
 
         client.on('authenticated', (session) => {

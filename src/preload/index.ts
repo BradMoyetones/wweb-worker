@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { Chat, ClientInfo, Message } from 'whatsapp-web.js';
+import { Chat, ClientInfo, Contact, Message } from 'whatsapp-web.js';
 
 // Custom APIs for renderer
 const api = {
@@ -39,13 +39,19 @@ const whatsappApi = {
     ipcRenderer.on('whatsapp-chats', (_, chats: Chat[]) => callback(chats));
   },
 
+  // Contacts iniciales
+  onContacts: (callback: (contacts: Contact[]) => void) => {
+    ipcRenderer.on('whatsapp-contacts', (_, contacts: Contact[]) => callback(contacts));
+  },
+
   // Mensajes entrantes
   onMessage: (callback: (msg: Message) => void) => {
     ipcRenderer.on('whatsapp-message', (_, msg: Message) => callback(msg));
   },
 
   getMessagesChat: (chatId: string) => ipcRenderer.invoke('whatsapp-get-messages', chatId),
-  downloadMedia: (messageId: string, chatId: string) => ipcRenderer.invoke('whatsapp-download-media', messageId, chatId)
+  downloadMedia: (messageId: string, chatId: string) => ipcRenderer.invoke('whatsapp-download-media', messageId, chatId),
+  sendMessage: (chatId: string, content: string, replyToId?: string | null) => ipcRenderer.invoke('whatsapp-send-message', chatId, content, replyToId)
 };
 
 export type Api = typeof api

@@ -8,22 +8,24 @@ export default function HomeLayout() {
     return (
         <div>
 
-            <div id="app" className="relative h-screen space-x-2">
+            <div id="app" className="relative h-screen space-x-2 pb-2">
                 <TitleBar />
 
                 <aside className="[grid-area:aside] flex-col flex ml-2" id="sidebarMain">
-                    <ScrollArea className=" h-full">
+                    <ScrollArea className="h-full">
                         <AsideMenu />
                     </ScrollArea>
                 </aside>
 
                 <main
-                    className="[grid-area:main] rounded-lg bg-background border overflow-auto h-full"
+                    className="[grid-area:main] rounded-lg bg-background border h-full mr-2"
                     id="main"
                 >
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <Outlet />
-                    </Suspense>
+                    <ScrollArea className="h-full rounded-lg">
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <Outlet />
+                        </Suspense>
+                    </ScrollArea>
                 </main>
             </div>
             

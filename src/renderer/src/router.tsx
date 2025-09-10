@@ -8,6 +8,7 @@ import Advanced from "./pages/settings/routes/Advanced";
 
 
 const Me = lazy(() => import("./pages/settings/routes/Me"));
+const Workflows = lazy(() => import("./pages/workflows/Workflows"));
 
 const router = createHashRouter([
     {
@@ -35,6 +36,10 @@ const router = createHashRouter([
                         element:  <Advanced />
                     },
                 ]
+            },
+            {
+                path: "workflows",
+                element: <Workflows />,
             },
         ]
     },

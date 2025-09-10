@@ -5,7 +5,9 @@ import { EllipsisVertical, Loader, Settings } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Timeline } from "@/components/timeline";
 import { Badge } from "@/components/ui/badge";
-import { Chat, ClientInfo, Message } from "whatsapp-web.js";
+import { Chat, ClientInfo, Contact, Message } from "whatsapp-web.js";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
 export const WhatsAppContext = createContext<WhatsAppContextType | undefined>(undefined);
 
@@ -14,7 +16,11 @@ export function WhatsAppProvider({ children }: { children: React.ReactNode }) {
     const [imgQr, setImgQr] = useState("");
     const [user, setUser] = useState<ClientInfo & {profilePic: string | null} | null>(null);
     const [chats, setChats] = useState<Chat[]>([]);
+    const [contacts, setContacts] = useState<Contact[]>([]);
     const [chatSelected, setChatSelected] = useState("")
+
+    const [showOverlay, setShowOverlay] = useState(true);
+    const [fadeOut, setFadeOut] = useState(false);
 
     const whatsappSteps = [
         {
@@ -48,28 +54,47 @@ export function WhatsAppProvider({ children }: { children: React.ReactNode }) {
 
             if (data.status === 'ready') {
                 setImgQr('');
+
+                setTimeout(() => setFadeOut(true), 1000);
             }
         });
     }, []);
 
+    useEffect(() => {
+        if (fadeOut) {
+            const t = setTimeout(() => setShowOverlay(false), 500);
+            return () => clearTimeout(t);
+        }
+        return
+    }, [fadeOut]);
+
     const handleNewMsg = (msg: Message) => {
         setChats((prevChats) => {
             return prevChats.map((chat) => {
-                // en chats privados, `chat.id._serialized` === `msg.from` o `msg.to`
-                if (chat.id._serialized === msg.from || chat.id._serialized === msg.to) {
-                    return {
-                        ...chat,
-                        lastMessage: msg, // whatsapp-web.js ya trae la propiedad
-                    };
+                // si es un grupo -> siempre el chat del grupo (msg.to)
+                if (chat.isGroup && chat.id._serialized === msg.to) {
+                    return { ...chat, lastMessage: msg };
                 }
+
+                // si es privado y yo lo envié -> solo actualizar al destinatario
+                if (msg.fromMe && chat.id._serialized === msg.to) {
+                    return { ...chat, lastMessage: msg };
+                }
+
+                // si es privado y lo recibí -> solo actualizar al remitente
+                if (!msg.fromMe && chat.id._serialized === msg.from) {
+                    return { ...chat, lastMessage: msg };
+                }
+
                 return chat;
             });
         });
     };
-    
+
     useEffect(() => {
         window.whatsappApi.onUser((user) => setUser(user as ClientInfo & {profilePic: string | null}));
         window.whatsappApi.onChats((chats) => setChats(chats));
+        window.whatsappApi.onContacts((contacts) => setContacts(contacts));
         window.whatsappApi.onMessage((msg) => handleNewMsg(msg));
     }, []);
 
@@ -80,11 +105,12 @@ export function WhatsAppProvider({ children }: { children: React.ReactNode }) {
                 status,
                 user,
                 chats,
+                contacts,
                 chatSelected,
                 setChatSelected
             }}
         >
-            {status === 'loading' || status === 'qr' ? (
+            {(status === 'loading' || status === 'qr') && (
                 <div className="bg-background fixed inset-0 z-50">
                     <div className="flex items-center justify-center h-full">
                         <Card className="max-w-4xl w-full">
@@ -110,7 +136,25 @@ export function WhatsAppProvider({ children }: { children: React.ReactNode }) {
                         </Card>
                     </div>
                 </div>
-            ) : null}
+            )}
+
+            {showOverlay && (status === 'init' || status === 'authenticated' || status === 'ready') && (
+                <div
+                    className={cn(
+                        "bg-background fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-500",
+                        fadeOut ? "opacity-0" : "opacity-100"
+                    )}
+                >
+                    <Card className="max-w-4xl w-full">
+                        <CardContent>
+                            <div className="flex flex-col items-center justify-center gap-6 text-center">
+                                <h1 className="text-3xl font-bold">Cargando chats</h1>
+                                <Progress value={status === "init" ? 20 : status === 'authenticated' ? 60 : 100} />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
 
             {children}
         </WhatsAppContext.Provider>
