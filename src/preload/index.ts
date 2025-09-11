@@ -18,6 +18,9 @@ const api = {
     onMaximizeChanged: (callback: (isMax: boolean) => void) => {
       ipcRenderer.on("maximize-changed", (_, value) => callback(value));
     },
+
+    // DATABASE
+    getAllWorkflows: () => ipcRenderer.invoke('getAllWorkflows'),
 }
 
 const whatsappApi = {

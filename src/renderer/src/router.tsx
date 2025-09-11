@@ -9,7 +9,7 @@ import LayoutWorkflows from "./pages/workflows/Layout";
 
 
 const Me = lazy(() => import("./pages/settings/routes/Me"));
-const Workflows = lazy(() => import("./pages/workflows/Workflows"));
+const Workflows = lazy(() => import("./pages/workflows/[id]/Workflows"));
 const HomeWorkflows = lazy(() => import("./pages/workflows/HomeWorkflows"));
 
 const router = createHashRouter([

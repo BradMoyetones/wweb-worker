@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import router from './router'
 import { Toaster } from './components/ui/sonner';
-import { ThemeProvider, VersionProvider } from './contexts';
+import { DataProvider, ThemeProvider, VersionProvider } from './contexts';
 import { WhatsAppProvider } from './contexts/WhatsAppContext';
 import { ReactFlowProvider } from '@xyflow/react';
 
@@ -16,10 +16,12 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <ThemeProvider defaultTheme="dark">
         <VersionProvider>
           <WhatsAppProvider>
-            <ReactFlowProvider>
-              <RouterProvider router={router} />
-              <Toaster />
-            </ReactFlowProvider>
+            <DataProvider>
+              <ReactFlowProvider>
+                <RouterProvider router={router} />
+                <Toaster />
+              </ReactFlowProvider>
+            </DataProvider>
           </WhatsAppProvider>
         </VersionProvider>
     </ThemeProvider>

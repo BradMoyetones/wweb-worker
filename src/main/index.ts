@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { installLatestVersionApp, verifyVersionApp } from './config/updater'
 import { initializeClient } from '@core/lib/whatsappClient'
 import { Client } from 'whatsapp-web.js'
+import { getAllWorkflows } from './models/workflow'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -268,4 +269,10 @@ ipcMain.handle("whatsapp-send-message", async (event, chatId: string, content: s
     console.error("Error sending message", err);
     return { error: err.message };
   }
+});
+
+
+// DATABASE
+ipcMain.handle('getAllWorkflows', (_event) => {
+  return getAllWorkflows();
 });
