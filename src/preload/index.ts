@@ -1,26 +1,29 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { Chat, ClientInfo, Contact, Message } from 'whatsapp-web.js';
+import { WorkflowInput } from '@core/types/validator';
 
 // Custom APIs for renderer
 const api = {
-    verifyVersionApp: () => ipcRenderer.invoke('verifyVersionApp'),
-    installLatestVersionApp: () => ipcRenderer.invoke('installLatestVersionApp'),
+  verifyVersionApp: () => ipcRenderer.invoke('verifyVersionApp'),
+  installLatestVersionApp: () => ipcRenderer.invoke('installLatestVersionApp'),
 
-    createNewWindow: (url: string) => ipcRenderer.invoke('open-new-window', url),
+  createNewWindow: (url: string) => ipcRenderer.invoke('open-new-window', url),
 
-    getAppVersion: () => ipcRenderer.invoke("get-app-version"),
-    getPlatform: () => ipcRenderer.invoke("get-platform"),
-    minimize: () => ipcRenderer.send("minimize"),
-    maximize: () => ipcRenderer.invoke("maximize"),
-    isMaximized: () => ipcRenderer.invoke("isMaximized"),
-    close: () => ipcRenderer.send("close"),
-    onMaximizeChanged: (callback: (isMax: boolean) => void) => {
-      ipcRenderer.on("maximize-changed", (_, value) => callback(value));
-    },
+  getAppVersion: () => ipcRenderer.invoke("get-app-version"),
+  getPlatform: () => ipcRenderer.invoke("get-platform"),
+  minimize: () => ipcRenderer.send("minimize"),
+  maximize: () => ipcRenderer.invoke("maximize"),
+  isMaximized: () => ipcRenderer.invoke("isMaximized"),
+  close: () => ipcRenderer.send("close"),
+  onMaximizeChanged: (callback: (isMax: boolean) => void) => {
+    ipcRenderer.on("maximize-changed", (_, value) => callback(value));
+  },
 
-    // DATABASE
-    getAllWorkflows: () => ipcRenderer.invoke('getAllWorkflows'),
+  // DATABASE
+  getAllWorkflows: () => ipcRenderer.invoke('getAllWorkflows'),
+  createWorkflow: (input: Partial<WorkflowInput>) => ipcRenderer.invoke('createWorkflow', input),
+  findWorkflowById: (id: string) => ipcRenderer.invoke('findWorkflowById', id)
 }
 
 const whatsappApi = {

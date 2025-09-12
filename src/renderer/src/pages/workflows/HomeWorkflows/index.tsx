@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { WorkflowsDashboard } from "../components/WorkflowsDashboard";
 
 // Mock data for demonstration
@@ -56,9 +55,6 @@ const mockWorkflows = [
 export default function HomeWorkflows() {
     return (
         <div>
-            <Link to={"/workflows/1"}>
-                Prueba
-            </Link>
             <WorkflowsDashboard workflows={mockWorkflows} />
         </div>
     )

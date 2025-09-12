@@ -6,11 +6,10 @@ export const DataContext = createContext<DataContextType | undefined>(undefined)
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
     const [workflows, setWorkflows] = useState<Workflow[]>([]);
+    const [workflowSelected, setWorkflowSelected] = useState<Workflow | null>(null);
     
     const fetchData = async() => {
         const data = await window.api.getAllWorkflows()
-        console.log(data);
-        
         setWorkflows(data)
     }
     
@@ -22,7 +21,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         <DataContext.Provider 
             value={{ 
                 workflows,
-                setWorkflows
+                setWorkflows,
+                workflowSelected,
+                setWorkflowSelected
             }}
         >
             {children}

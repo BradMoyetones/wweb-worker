@@ -48,7 +48,7 @@ export function Controls() {
     
     return (
         <Panel position="bottom-left">
-            <div className="p-2 flex gap-2 items-center border rounded-md bg-background shadow-lg">
+            <div className="p-2 flex gap-2 items-center border rounded-md bg-background/10 backdrop-blur-2xl shadow-lg">
                 <Button
                     onClick={() =>
                         zoomOut({ duration: 200, interpolate: 'smooth' })

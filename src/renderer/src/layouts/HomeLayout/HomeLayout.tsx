@@ -8,10 +8,10 @@ export default function HomeLayout() {
     return (
         <div>
 
-            <div id="app" className="relative h-screen space-x-2 pb-2">
+            <div id="app" className="relative h-screen pb-2">
                 <TitleBar />
 
-                <aside className="[grid-area:aside] flex-col flex ml-2" id="sidebarMain">
+                <aside className="[grid-area:aside] flex-col flex mx-2" id="sidebarMain">
                     <ScrollArea className="h-full">
                         <AsideMenu />
                     </ScrollArea>

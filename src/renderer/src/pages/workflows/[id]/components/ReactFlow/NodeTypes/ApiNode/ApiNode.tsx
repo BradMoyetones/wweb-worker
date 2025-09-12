@@ -83,7 +83,12 @@ export function ApiNode({ data, selected }: NodeProps & {data: Record<string, an
                                 {config.method}
                             </Badge>
                         </div>
-                        <Button size="sm" variant="ghost" onClick={() => setIsExpanded(true)}>
+                        <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => setIsExpanded(true)}
+                            className="nodrag nopan"
+                        >
                             <Settings className="w-4 h-4" />
                         </Button>
                     </div>
