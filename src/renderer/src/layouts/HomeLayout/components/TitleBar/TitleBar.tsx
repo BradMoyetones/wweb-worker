@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Copy, Minus, Square, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Copy, Minus, RotateCw, Square, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../../../../components/ui/button";
 import HomeIcon from "@/icons/Home"
@@ -76,6 +76,14 @@ export function TitleBar() {
                     className="flex-shrink-0"
                 >
                     <HomeIcon />
+                </Button>
+                <Button 
+                    variant={"ghost"} 
+                    size={"icon"} 
+                    onClick={() => window.location.reload()}
+                    className="flex-shrink-0"
+                >
+                    <RotateCw />
                 </Button>
             </div>
 
