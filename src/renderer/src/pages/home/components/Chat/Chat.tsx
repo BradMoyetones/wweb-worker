@@ -223,7 +223,7 @@ export function Chat() {
             
             <form
                 onSubmit={handleSendMessage}
-                className="flex flex-col gap-2 mt-4 border-t border-border bg-background p-4 sticky bottom-0 transition-all"
+                className="flex flex-col gap-2 mt-4 border-t border-border bg-background/10 backdrop-blur-2xl p-4 sticky bottom-0 transition-all"
             >
                 {reply && (
                     <div className="flex items-center gap-2">
@@ -286,7 +286,7 @@ export function Chat() {
                                         <span className="sr-only">Emogis</span>
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-full">
+                                <PopoverContent className="w-full bg-background/10 backdrop-blur-2xl p-2">
                                     <Picker
                                         data={data}
                                         theme={theme}
