@@ -41,8 +41,8 @@ export const workflows = sqliteTable("workflows", {
     tags: text("tags"), // JSON.stringify([...])
 
     // Auditoría
-    createdAt: integer("created_at").$defaultFn(() => Date.now()),
-    updatedAt: integer("updated_at").$defaultFn(() => Date.now()),
+    createdAt: integer("created_at").notNull().$defaultFn(() => Date.now()),
+    updatedAt: integer("updated_at").notNull().$defaultFn(() => Date.now()),
 
     // Configuración
     timeout: integer("timeout"), // en minutos

@@ -7,4 +7,7 @@ export interface DataContextType {
     // Estado para el que se seleccione en la vista :id
     workflowSelected: Workflow | null;
     setWorkflowSelected: React.Dispatch<React.SetStateAction<Workflow | null>>;
+
+    loadingCreateWorkflow: boolean;
+    handleCrateWorkflow: () => Promise<Workflow | null>
 }

@@ -8,8 +8,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Workflow } from '@core/types/data';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { initWorkflow } from '@/utils/workflowsHelper';
-import { toast } from 'sonner';
 import { useData } from '@/contexts';
 
 
@@ -100,10 +98,9 @@ function withToolbar<T extends NodeProps>(
 export default function WorkflowPage() {
     const [nodes, setNodes] = useState(initialNodes);
     const [edges, setEdges] = useState(initialEdges);
-    const {workflowSelected, setWorkflowSelected} = useData()
+    const {workflowSelected, setWorkflowSelected, handleCrateWorkflow, loadingCreateWorkflow} = useData()
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null)
     const {id} = useParams()
-    const [loading, setLoading] = useState(false)
     const [loadingFetch, setLoadingFetch] = useState(false)
     const router = useNavigate()
 
@@ -167,20 +164,7 @@ export default function WorkflowPage() {
         [reactFlowInstance, setNodes],
     )
 
-    const handleCrate = async() => {
-        setLoading(true)
-        const res = await initWorkflow()
-        
-        if(res){
-            setLoading(false)
-            router(`/workflows/${res.id}`, {viewTransition: true})
-            return
-        }
-
-        setLoading(false)
-        toast.error("Ocurrio un error al intentar crear el workflow")
-        return
-    }
+    
 
     if(loadingFetch){
         return (
@@ -215,10 +199,15 @@ export default function WorkflowPage() {
                             <ArrowLeft /> Volver al Dashboard
                         </Button>
                         <Button
-                            onClick={handleCrate}
+                            onClick={async() => {
+                                const res = await handleCrateWorkflow()
+                                if(res){
+                                    router(`/workflows/${res.id}`, {viewTransition: true})
+                                }
+                            }}
                         >
                             Crear Nuevo
-                            {loading ? (<Loader className="animate-spin" />) : (<Plus className="w-4 h-4 mr-2" />)}
+                            {loadingCreateWorkflow ? (<Loader className="animate-spin" />) : (<Plus className="w-4 h-4 mr-2" />)}
                         </Button>
                     </div>
                 </div>
